@@ -5,7 +5,7 @@ import {
   Text,
   TouchableHighlight,
   SafeAreaView,
-  FlatList,
+  ScrollView,
   Dimensions,
 } from 'react-native';
 import ProgressBar from '../lib/ProgressBar';
@@ -30,18 +30,31 @@ function User() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainView}>
-        <ProgressBar />
-        <Text style={styles.formLabel}>Products</Text>
-        <FlatList
-          data={data}
-          renderItem={({item}) => (
-            <View style={styles.item}>
-              <Text>{item.name}</Text>
-              <Text>{item.price}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.index}
-        />
+        <ScrollView style={styles.scrollView}>
+          <ProgressBar />
+          <Text style={styles.formLabel}>Products</Text>
+          {data
+            ? data.map((product, index) => {
+                return (
+                  <View style={styles.item} key={index}>
+                    <Text>{product.name}</Text>
+                    <Text>{product.price}</Text>
+                  </View>
+                );
+              })
+            : []}
+        </ScrollView>
+        {/*<FlatList*/}
+        {/*  style={{width: '100%'}}*/}
+        {/*  data={data}*/}
+        {/*  renderItem={({item}) => (*/}
+        {/*    <View style={styles.item}>*/}
+        {/*      <Text>{item.name}</Text>*/}
+        {/*      <Text>{item.price}</Text>*/}
+        {/*    </View>*/}
+        {/*  )}*/}
+        {/*  keyExtractor={(item) => item.index}*/}
+        {/*/>*/}
         <TouchableHighlight
           underlayColor="transparent"
           style={styles.buttonStyle}>
@@ -62,6 +75,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 50,
     backgroundColor: '#FCFAF5',
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+  },
+  radioButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    backgroundColor: '#F6F3ED',
+    borderWidth: 1,
+    borderColor: '#F6F3ED',
+    borderStyle: 'solid',
   },
   formLabel: {
     fontSize: 20,
@@ -73,7 +97,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 20,
   },
   textStyle: {
     width: '100%',
@@ -90,8 +113,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E9F1',
     fontSize: 23,
     borderRadius: 6,
-    width: Dimensions.get('screen').width,
     height: Dimensions.get('window').height * 0.14,
+    width: '100%',
+  },
+  scrollView: {
+    width: '100%',
   },
   mainTextStyle: {
     width: '100%',
