@@ -8,7 +8,7 @@ import {
   Animated,
 } from 'react-native';
 
-function ShoppingSlider() {
+function ShoppingSlider({selected, deleteProduct}) {
   let animation = useRef(new Animated.Value(0));
   const [progress, setProgress] = useState(0);
   const [sliderCount, setSliderCount] = useState(5);
@@ -30,24 +30,44 @@ function ShoppingSlider() {
 
   return (
     <View style={styles.container}>
-      <Text>Shopping cart</Text>
-      <Text style={{color: '#000'}}>
-        Items {progress}/{sliderCount}
-      </Text>
-      <View style={styles.progressBar}>
-        <Animated.View
-          style={
-            ([StyleSheet.absoluteFill],
-            {borderRadius: 20, backgroundColor: '#2880EA', width})
-          }
-        />
+      <Text style={styles.bigText}>Shopping cart</Text>
+      <View>
+        <Text style={{color: '#000'}}>
+          Items {progress}/{sliderCount}
+        </Text>
+        <View style={styles.progressBar}>
+          <Animated.View
+            style={
+              ([StyleSheet.absoluteFill],
+              {borderRadius: 20, backgroundColor: '#2880EA', width})
+            }
+          />
+        </View>
+        {selected.length
+          ? selected.map((product, index) => (
+              <View key={index}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text>{product.name}</Text>
+                  <TouchableOpacity onPress={() => deleteProduct(index)}>
+                    <Text
+                      style={{
+                        textDecorationStyle: 'solid',
+                        textDecorationColor: '#000',
+                        textDecorationLine: 'underline',
+                      }}>
+                      Delete
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text>{product.price}</Text>
+              </View>
+            ))
+          : null}
       </View>
-      <TouchableOpacity onPress={add}>
-        <Text>TouchPlus</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={subtract}>
-        <Text>TouchMinus</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -71,6 +91,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCFAF5',
     width: '100%',
     height: Dimensions.get('window').height * 0.2,
+  },
+  bigText: {
+    color: '#1F2126',
+    fontSize: 22,
   },
   progressBar: {
     flexDirection: 'row',

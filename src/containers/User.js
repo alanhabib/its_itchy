@@ -6,12 +6,17 @@ import {
   TouchableHighlight,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import ProgressBar from '../lib/ProgressBar';
 
+const CHECK_IMAGE = require('../assets/images/check-mark.png');
+
 function User() {
   const [data, setData] = useState();
+  const [selected, setSelected] = useState([]);
 
   function fetchData() {
     return fetch('https://mock.itsitchy.com/products')
@@ -23,38 +28,53 @@ function User() {
       .catch((error) => console.log('error from fetch', error));
   }
 
+  function addProduct(item) {
+    setSelected((prevState) => {
+      const array = [...prevState, item];
+      return Array.from(new Set(array));
+    });
+  }
+
+  function deleteProduct(key) {
+    const newList = selected.filter((product, index) => key !== index);
+    return setSelected(newList);
+  }
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  console.log('# selected', selected);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainView}>
         <ScrollView style={styles.scrollView}>
-          <ProgressBar />
+          <ProgressBar selected={selected} deleteProduct={deleteProduct} />
           <Text style={styles.formLabel}>Products</Text>
           {data
             ? data.map((product, index) => {
                 return (
-                  <View style={styles.item} key={index}>
-                    <Text>{product.name}</Text>
-                    <Text>{product.price}</Text>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => addProduct(product)}
+                    key={index}>
+                    <View style={styles.item}>
+                      <Text>{product.name}</Text>
+                      {selected.includes(product) ? (
+                        <Image
+                          source={CHECK_IMAGE}
+                          style={styles.radioButton}
+                        />
+                      ) : (
+                        <View style={styles.radioButton} />
+                      )}
+                      <Text>{product.price}</Text>
+                    </View>
+                  </TouchableOpacity>
                 );
               })
             : []}
         </ScrollView>
-        {/*<FlatList*/}
-        {/*  style={{width: '100%'}}*/}
-        {/*  data={data}*/}
-        {/*  renderItem={({item}) => (*/}
-        {/*    <View style={styles.item}>*/}
-        {/*      <Text>{item.name}</Text>*/}
-        {/*      <Text>{item.price}</Text>*/}
-        {/*    </View>*/}
-        {/*  )}*/}
-        {/*  keyExtractor={(item) => item.index}*/}
-        {/*/>*/}
         <TouchableHighlight
           underlayColor="transparent"
           style={styles.buttonStyle}>
@@ -86,6 +106,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F6F3ED',
     borderStyle: 'solid',
+    alignSelf: 'flex-end',
   },
   formLabel: {
     fontSize: 20,
@@ -106,6 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   item: {
+    justifyContent: 'space-between',
     marginTop: 24,
     paddingVertical: 14,
     paddingLeft: 16,
