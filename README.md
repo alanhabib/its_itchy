@@ -1,31 +1,20 @@
-# rockerApp
-React Native application with a simple form
-React Native application built with npx in order to speed up the process of programing the application.
-Simple custom form combined with Redux, AsyncStorage and validation: 
-  - Social security number
-  - Phone number
-  - Email address
-  - Country
-  - Submit button
+# its_itchy
 
-Also fetching an API from https://restcountries.eu/ where the countries are displayed in a dropbox
+ Requirements:
+	•	The products in the list are to be fetched from an endpoint available at https://mock.itsitchy.com/products 
+	•	All content should be enclosed in a ScrollView, except for the button which will sit absolute on top of the content at the bottom of the screen. 
+	•	When pressing a product card, the card should be marked. Pressing a marked card will remove the marking. 
+	•	When the add to cart button is pressed, all marked cards will be added to the Shopping cart section. 
+	•	Any cards in the shopping cart section should be greyed out, and have their click actions disabled. 
+	•	Pressing the delete button will remove an item from the cart and immediately make it available in the list of products. 
+	•	The list of products should be sorted with the disabled items (items in the cart) at the bottom. 
+	•	Counters should increment and decrement appropriately. 
+	•	The dark blue part of the progress bar should grow depending on the amount of products in the shopping cart. 
+	•	The “Add to cart” button should be disabled if the shopping cart is full, or if the amount of products selected won’t fit in the cart. 
 
-FUNCTIONALITY
-These following points are included: 
+Bonus points:
+	•	Make the shopping cart item bar animate smoothly when filling the cart with items. 
+	•	Use LayoutAnimation to make the sorting of the product list fluid.   
 
-- The social security number needs to be a valid Swedish SSN (see https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)​)
-- The phone number needs to be a valid Swedish phone number (see https://en.wikipedia.org/wiki/Telephone_numbers_in_Sweden​)
-- The email address needs to be valid
-- The countries needs to be displayed as a drop down box
-- All fields are mandatory
-- Validation errors need to be displayed in some way if the input data is wrong.
-- The Submit button needs to log "Success" to the console when clicked if, and only if,
-  all fields are valid.
-- The input fields need to persist their values upon refresh, e.g. by using local storage,
-  so that their data is still there if the user refreshes the page.
-- Local storage needs to be emptied upon a successful Submit so that if the page is
-  refreshed will display empty fields.
-  
 TODO's: 
-
 - The parent component "User" is really code heavy and needs to be organised in a better way for it to be more readable. Refactoring is needed. 
