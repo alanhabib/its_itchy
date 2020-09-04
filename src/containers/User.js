@@ -17,22 +17,35 @@ const CHECK_IMAGE = require('../assets/images/check-mark.png');
 function User() {
   const [data, setData] = useState();
   const [selected, setSelected] = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [submit, setSubmit] = useState(false);
+
+  const addToProgress = (key, number) => {
+    return setProgress((prevCount) => Math.min(prevCount + key, number));
+  };
 
   function fetchData() {
     return fetch('https://mock.itsitchy.com/products')
       .then((res) => res.json())
       .then((mockData) => {
-        console.log('## mockdata', mockData);
         return setData(mockData);
       })
       .catch((error) => console.log('error from fetch', error));
   }
 
   function addProduct(item) {
-    setSelected((prevState) => {
-      const array = [...prevState, item];
-      return Array.from(new Set(array));
+    return new Promise((resolve, reject) => {
+      resolve(
+        setSelected((prevState) => {
+          const array = [...prevState, item];
+          return Array.from(new Set(array));
+        }),
+      );
     });
+  }
+
+  function submitProducts(show) {
+    setSubmit(show);
   }
 
   function deleteProduct(key) {
@@ -43,20 +56,27 @@ function User() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  console.log('# selected', selected);
-
+  console.log('## selected.length', selected.length);
+  const buttonColor = !selected.length && '#E0ECFE';
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainView}>
         <ScrollView style={styles.scrollView}>
-          <ProgressBar selected={selected} deleteProduct={deleteProduct} />
+          <ProgressBar
+            submit={submit}
+            selected={selected}
+            deleteProduct={deleteProduct}
+            progress={progress}
+          />
           <Text style={styles.formLabel}>Products</Text>
           {data
             ? data.map((product, index) => {
                 return (
                   <TouchableOpacity
-                    onPress={() => addProduct(product)}
+                    onPress={() => {
+                      addProduct(product);
+                      addToProgress(selected.length, 5);
+                    }}
                     key={index}>
                     <View style={styles.item}>
                       <Text>{product.name}</Text>
@@ -75,11 +95,15 @@ function User() {
               })
             : []}
         </ScrollView>
-        <TouchableHighlight
+        <TouchableOpacity
+          onPress={() => {
+            submitProducts(true);
+          }}
+          disable={!selected.length}
           underlayColor="transparent"
           style={styles.buttonStyle}>
           <Text style={styles.buttonTextStyle}>Submit</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -151,11 +175,11 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     width: '100%',
-    height: 40,
-    borderRadius: 50,
+    height: 60,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#2880EA',
     marginTop: 40,
   },
   buttonTextStyle: {
@@ -163,8 +187,9 @@ const styles = StyleSheet.create({
     height: '100%',
     textAlign: 'center',
     marginTop: 10,
-    fontSize: 18,
-    color: '#535353',
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#FCFAF5',
     borderRadius: 50,
   },
 });

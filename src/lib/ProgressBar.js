@@ -8,12 +8,10 @@ import {
   Animated,
 } from 'react-native';
 
-function ShoppingSlider({selected, deleteProduct}) {
+function ShoppingSlider({submit, selected, deleteProduct, progress}) {
   let animation = useRef(new Animated.Value(0));
-  const [progress, setProgress] = useState(0);
   const [sliderCount, setSliderCount] = useState(5);
-  const add = () => setProgress((prevCount) => Math.min(prevCount + 1, 5));
-  const subtract = () => setProgress((prevCount) => Math.max(prevCount - 1, 0));
+  // const subtract = () => setProgress((prevCount) => Math.max(prevCount - 1, 0));
 
   useEffect(() => {
     Animated.timing(animation.current, {
@@ -43,7 +41,7 @@ function ShoppingSlider({selected, deleteProduct}) {
             }
           />
         </View>
-        {selected.length
+        {submit && selected.length
           ? selected.map((product, index) => (
               <View key={index}>
                 <View
