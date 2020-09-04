@@ -33,17 +33,18 @@ function User() {
       .catch((error) => console.log('error from fetch', error));
   }
 
+  async function filterData() {
+    const newData = await data.filter((product) => !selected.includes(product));
+    const dataFiltered = await newData.concat(selected);
+    return setData(dataFiltered);
+  }
+
   function addProduct(item) {
-    return new Promise((resolve, reject) => {
-      resolve(
-        setSelected((prevState) => {
-          const array = selected.includes(item)
-            ? selected.filter((product) => product !== item)
-            : [...prevState, item];
-          return Array.from(new Set(array));
-        }),
-        reject('Your promise was rejected'),
-      );
+    return setSelected((prevState) => {
+      const array = selected.includes(item)
+        ? selected.filter((product) => product !== item)
+        : [...prevState, item];
+      return Array.from(new Set(array));
     });
   }
 
@@ -111,8 +112,9 @@ function User() {
         <TouchableOpacity
           onPress={() => {
             submitProducts(true);
+            filterData();
           }}
-          disabled={!selected.length || submit}
+          disabled={submit || selected.length > 5 || !selected.length}
           underlayColor="transparent"
           style={{
             width: '100%',
@@ -120,7 +122,8 @@ function User() {
             borderRadius: 20,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: submit ? '#E0ECFE' : buttonColor,
+            backgroundColor:
+              submit || selected.length > 5 ? '#E0ECFE' : buttonColor,
             marginTop: 40,
           }}>
           <Text style={styles.buttonTextStyle}>Add to cart</Text>
