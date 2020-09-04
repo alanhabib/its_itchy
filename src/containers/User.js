@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Text,
-  TouchableHighlight,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -20,9 +19,10 @@ function User() {
   const [progress, setProgress] = useState(0);
   const [submit, setSubmit] = useState(false);
 
-  const addToProgress = (key, number) => {
-    return setProgress((prevCount) => Math.min(prevCount + key, number));
-  };
+  const addToProgress = (key, number) =>
+    setProgress((prevCount) => Math.min(prevCount + key, number));
+
+  const subtract = () => setProgress((prevCount) => Math.max(prevCount - 1, 0));
 
   function fetchData() {
     return fetch('https://mock.itsitchy.com/products')
@@ -37,9 +37,12 @@ function User() {
     return new Promise((resolve, reject) => {
       resolve(
         setSelected((prevState) => {
-          const array = [...prevState, item];
+          const array = selected.includes(item)
+            ? selected.filter((product) => product !== item)
+            : [...prevState, item];
           return Array.from(new Set(array));
         }),
+        reject('Your promise was rejected'),
       );
     });
   }
@@ -56,8 +59,8 @@ function User() {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log('## selected.length', selected.length);
-  const buttonColor = !selected.length && '#E0ECFE';
+
+  const buttonColor = selected.length ? '#2880EA' : '#E0ECFE';
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainView}>
@@ -67,18 +70,28 @@ function User() {
             selected={selected}
             deleteProduct={deleteProduct}
             progress={progress}
+            subtract={subtract}
           />
           <Text style={styles.formLabel}>Products</Text>
+          <Text>Selected: {selected.length}</Text>
           {data
             ? data.map((product, index) => {
                 return (
                   <TouchableOpacity
-                    onPress={() => {
-                      addProduct(product);
+                    disabled={submit}
+                    onPress={async () => {
+                      await addProduct(product);
                       addToProgress(selected.length, 5);
                     }}
                     key={index}>
-                    <View style={styles.item}>
+                    <View
+                      style={{
+                        ...styles.item,
+                        backgroundColor:
+                          submit && selected.includes(product)
+                            ? 'rgba(229,233,241,0.3)'
+                            : '#E5E9F1',
+                      }}>
                       <Text>{product.name}</Text>
                       {selected.includes(product) ? (
                         <Image
@@ -99,10 +112,18 @@ function User() {
           onPress={() => {
             submitProducts(true);
           }}
-          disable={!selected.length}
+          disabled={!selected.length || submit}
           underlayColor="transparent"
-          style={styles.buttonStyle}>
-          <Text style={styles.buttonTextStyle}>Submit</Text>
+          style={{
+            width: '100%',
+            height: 60,
+            borderRadius: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: submit ? '#E0ECFE' : buttonColor,
+            marginTop: 40,
+          }}>
+          <Text style={styles.buttonTextStyle}>Add to cart</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -156,7 +177,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingLeft: 16,
     paddingRight: 24,
-    backgroundColor: '#E5E9F1',
+    // backgroundColor: '#E5E9F1',
     fontSize: 23,
     borderRadius: 6,
     height: Dimensions.get('window').height * 0.14,
@@ -186,6 +207,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     textAlign: 'center',
+    alignSelf: 'center',
     marginTop: 10,
     fontWeight: 'bold',
     fontSize: 16,

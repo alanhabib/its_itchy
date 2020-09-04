@@ -8,17 +8,16 @@ import {
   Animated,
 } from 'react-native';
 
-function ShoppingSlider({submit, selected, deleteProduct, progress}) {
+function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
   let animation = useRef(new Animated.Value(0));
   const [sliderCount, setSliderCount] = useState(5);
-  // const subtract = () => setProgress((prevCount) => Math.max(prevCount - 1, 0));
 
   useEffect(() => {
     Animated.timing(animation.current, {
-      toValue: progress,
+      toValue: submit && progress,
       duration: 500,
     }).start();
-  }, [progress]);
+  }, [submit, progress]);
 
   const width = animation.current.interpolate({
     inputRange: [0, 5],
@@ -31,7 +30,7 @@ function ShoppingSlider({submit, selected, deleteProduct, progress}) {
       <Text style={styles.bigText}>Shopping cart</Text>
       <View>
         <Text style={{color: '#000'}}>
-          Items {progress}/{sliderCount}
+          Items {submit ? progress : 0}/{sliderCount}
         </Text>
         <View style={styles.progressBar}>
           <Animated.View
@@ -50,7 +49,11 @@ function ShoppingSlider({submit, selected, deleteProduct, progress}) {
                     justifyContent: 'space-between',
                   }}>
                   <Text>{product.name}</Text>
-                  <TouchableOpacity onPress={() => deleteProduct(index)}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      deleteProduct(index);
+                      subtract();
+                    }}>
                     <Text
                       style={{
                         textDecorationStyle: 'solid',
