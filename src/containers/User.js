@@ -33,9 +33,20 @@ function User() {
       .catch((error) => console.log('error from fetch', error));
   }
 
-  async function filterData() {
-    const newData = await data.filter((product) => !selected.includes(product));
-    const dataFiltered = await newData.concat(selected);
+  function filterData() {
+    return new Promise((resolve, reject) => {
+      if (data) {
+        const newData = data.filter((product) => !selected.includes(product));
+        resolve(newData);
+      } else {
+        reject('Found no data to filter');
+      }
+    });
+  }
+
+  async function addSelectedData() {
+    const filteredData = await filterData();
+    const dataFiltered = filteredData.concat(selected);
     return setData(dataFiltered);
   }
 
@@ -112,7 +123,7 @@ function User() {
         <TouchableOpacity
           onPress={() => {
             submitProducts(true);
-            filterData();
+            addSelectedData();
           }}
           disabled={submit || selected.length > 5 || !selected.length}
           underlayColor="transparent"
