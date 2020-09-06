@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ function User() {
   const [selected, setSelected] = useState([]);
   const [progress, setProgress] = useState(0);
   const [submit, setSubmit] = useState(false);
+  const scrollRef = useRef();
 
   const addToProgress = (key, number) =>
     setProgress((prevCount) => Math.min(prevCount + key, number));
@@ -32,6 +33,10 @@ function User() {
       })
       .catch((error) => console.log('error from fetch', error));
   }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   function filterData() {
     return new Promise((resolve, reject) => {
@@ -68,15 +73,20 @@ function User() {
     return setSelected(newList);
   }
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  function scrollToTop() {
+    scrollRef.current.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  }
+
+  console.log('scroll', scrollRef);
 
   const buttonColor = selected.length ? '#2880EA' : '#E0ECFE';
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainView}>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView ref={scrollRef} style={styles.scrollView}>
           <ProgressBar
             submit={submit}
             selected={selected}
@@ -117,7 +127,9 @@ function User() {
                       ) : (
                         <View style={styles.radioButton} />
                       )}
-                      <Text style={styles.productPrice}>{product.price} kr</Text>
+                      <Text style={styles.productPrice}>
+                        {product.price} kr
+                      </Text>
                     </View>
                   </TouchableOpacity>
                 );
@@ -125,23 +137,23 @@ function User() {
             : []}
         </ScrollView>
         <TouchableOpacity
-          onPress={() => {
+          onPress={async () => {
             submitProducts(true);
-            addSelectedData();
+            await addSelectedData();
+            scrollToTop();
           }}
           disabled={submit || selected.length > 5 || !selected.length}
           underlayColor="transparent"
           style={{
             width: '100%',
-            height: 60,
             borderRadius: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
             backgroundColor:
               submit || selected.length > 5 ? '#E0ECFE' : buttonColor,
             marginTop: 40,
           }}>
-          <Text style={styles.buttonTextStyle}>Add to cart</Text>
+          <View style={styles.addButton}>
+            <Text style={styles.buttonTextStyle}>Add to cart</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -201,7 +213,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingLeft: 16,
     paddingRight: 24,
-    // backgroundColor: '#E5E9F1',
     fontSize: 23,
     borderRadius: 6,
     height: Dimensions.get('window').height * 0.14,
@@ -220,19 +231,21 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     width: '100%',
-    height: 60,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2880EA',
     marginTop: 40,
   },
+  addButton: {
+    height: 60,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   buttonTextStyle: {
     width: '100%',
-    height: '100%',
     textAlign: 'center',
-    alignSelf: 'center',
-    marginTop: 10,
     fontWeight: 'bold',
     fontSize: 16,
     color: '#FCFAF5',
