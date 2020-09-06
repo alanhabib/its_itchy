@@ -11,12 +11,12 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
     Animated.parallel([
       Animated.timing(progressBarAnimation.current, {
         toValue: submit && selected.length,
-        duration: 800,
+        duration: 500,
         useNativeDriver: false,
       }),
       Animated.timing(animationHeight.current, {
         toValue: submit && selected.length,
-        duration: 1000,
+        duration: 500,
         useNativeDriver: false,
       }),
       Animated.timing(fadeIn.current, {
@@ -44,8 +44,6 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
     outputRange: [0, 1],
   });
 
-  console.log('## progress', progress);
-  console.log('## selected.lenght', selected.length);
   return (
     <Animated.View
       style={{
@@ -134,6 +132,7 @@ const styles = StyleSheet.create({
     color: '#1F2126',
     fontSize: 22,
     paddingBottom: 50,
+    fontWeight: '600',
   },
   progressBar: {
     flexDirection: 'row',

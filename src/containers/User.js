@@ -105,8 +105,8 @@ function User() {
                 return (
                   <TouchableOpacity
                     disabled={submit}
-                    onPress={async () => {
-                      await addProduct(product);
+                    onPress={() => {
+                      addProduct(product);
                       addToProgress(selected.length, 5);
                     }}
                     key={index}>
