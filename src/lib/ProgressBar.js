@@ -10,12 +10,12 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
   useEffect(() => {
     Animated.parallel([
       Animated.timing(progressBarAnimation.current, {
-        toValue: submit && progress,
-        duration: 1000,
+        toValue: submit && selected.length,
+        duration: 800,
         useNativeDriver: false,
       }),
       Animated.timing(animationHeight.current, {
-        toValue: submit && progress,
+        toValue: submit && selected.length,
         duration: 1000,
         useNativeDriver: false,
       }),
@@ -25,14 +25,14 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
         useNativeDriver: false,
       }),
     ]).start();
-  }, [submit, progress]);
+  }, [submit, progress, selected]);
 
   const width = progressBarAnimation.current.interpolate({
     inputRange: [0, 5],
     outputRange: ['4%', '100%'],
     extrapolate: 'clamp',
   });
-  const heightOfProduct = progress * 60 + 160;
+  const heightOfProduct = selected.length * 60 + 160;
   const height = animationHeight.current.interpolate({
     inputRange: [0, 1],
     outputRange: [160, heightOfProduct],
@@ -45,6 +45,7 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
   });
 
   console.log('## progress', progress);
+  console.log('## selected.lenght', selected.length);
   return (
     <Animated.View
       style={{
@@ -55,7 +56,7 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
       <View>
         <Text style={styles.shoppingCartItemsTextWrapper}>
           <Text style={styles.itemsTextShoppingCart}>Items</Text>{' '}
-          {submit ? progress : 0}/{sliderCount}
+          {submit ? selected.length : 0}/{sliderCount}
         </Text>
         <View style={styles.progressBar}>
           <Animated.View
