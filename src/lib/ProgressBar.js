@@ -1,36 +1,61 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 
 function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
-  let animation = useRef(new Animated.Value(0));
+  const progressBarAnimation = useRef(new Animated.Value(0));
+  const animationHeight = useRef(new Animated.Value(0));
+  const fadeIn = useRef(new Animated.Value(0));
   const [sliderCount, setSliderCount] = useState(5);
 
   useEffect(() => {
-    Animated.timing(animation.current, {
-      toValue: submit && progress,
-      duration: 500,
-    }).start();
+    Animated.parallel([
+      Animated.timing(progressBarAnimation.current, {
+        toValue: submit && progress,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(animationHeight.current, {
+        toValue: submit && progress,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(fadeIn.current, {
+        toValue: submit && 1,
+        duration: 1500,
+        useNativeDriver: false,
+      }),
+    ]).start();
   }, [submit, progress]);
 
-  const width = animation.current.interpolate({
+  const width = progressBarAnimation.current.interpolate({
     inputRange: [0, 5],
     outputRange: ['4%', '100%'],
     extrapolate: 'clamp',
   });
+  const heightOfProduct = progress * 60 + 160;
+  const height = animationHeight.current.interpolate({
+    inputRange: [0, 1],
+    outputRange: [160, heightOfProduct],
+    extrapolate: 'clamp',
+  });
 
+  const opacity = fadeIn.current.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  console.log('## progress', progress);
   return (
-    <View style={styles.container}>
+    <Animated.View
+      style={{
+        ...styles.container,
+        height: height,
+      }}>
       <Text style={styles.bigText}>Shopping cart</Text>
       <View>
-        <Text style={{color: '#000'}}>
-          Items {submit ? progress : 0}/{sliderCount}
+        <Text style={styles.shoppingCartItemsTextWrapper}>
+          <Text style={styles.itemsTextShoppingCart}>Items</Text>{' '}
+          {submit ? progress : 0}/{sliderCount}
         </Text>
         <View style={styles.progressBar}>
           <Animated.View
@@ -42,34 +67,25 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
         </View>
         {submit && selected.length
           ? selected.map((product, index) => (
-              <View key={index}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
+              <Animated.View
+                style={{...styles.selectedProducts, opacity: opacity}}
+                key={index}>
+                <View style={styles.selectedProductName}>
                   <Text>{product.name}</Text>
                   <TouchableOpacity
                     onPress={() => {
                       deleteProduct(index);
                       subtract();
                     }}>
-                    <Text
-                      style={{
-                        textDecorationStyle: 'solid',
-                        textDecorationColor: '#000',
-                        textDecorationLine: 'underline',
-                      }}>
-                      Delete
-                    </Text>
+                    <Text style={styles.deleteText}>Delete</Text>
                   </TouchableOpacity>
                 </View>
                 <Text>{product.price}</Text>
-              </View>
+              </Animated.View>
             ))
           : null}
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -88,14 +104,35 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.08)',
     borderRadius: 6,
     padding: 20,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     backgroundColor: '#FCFAF5',
     width: '100%',
-    height: Dimensions.get('window').height * 0.2,
+  },
+  deleteText: {
+    color: '#E63636',
+    textDecorationStyle: 'solid',
+    textDecorationColor: '#E63636',
+    textDecorationLine: 'underline',
+  },
+  selectedProducts: {
+    height: 60,
+  },
+  selectedProductName: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  itemsTextShoppingCart: {
+    color: 'rgba(31,33,38,0.6)',
+  },
+  shoppingCartItemsTextWrapper: {
+    fontWeight: '500',
+    fontSize: 14,
+    color: '#1F2126',
   },
   bigText: {
     color: '#1F2126',
     fontSize: 22,
+    paddingBottom: 50,
   },
   progressBar: {
     flexDirection: 'row',
@@ -105,6 +142,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 7,
     paddingVertical: 4,
+    marginBottom: 30,
+    marginTop: 12,
   },
 });
 

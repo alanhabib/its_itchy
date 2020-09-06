@@ -84,8 +84,12 @@ function User() {
             progress={progress}
             subtract={subtract}
           />
-          <Text style={styles.formLabel}>Products</Text>
-          <Text>Selected: {selected.length}</Text>
+          <View style={styles.selectedAmountTextWrapper}>
+            <Text style={styles.formLabel}>Products</Text>
+            <Text style={styles.amountSelectedText}>
+              Selected: {selected.length}
+            </Text>
+          </View>
           {data
             ? data.map((product, index) => {
                 return (
@@ -104,7 +108,7 @@ function User() {
                             ? 'rgba(229,233,241,0.3)'
                             : '#E5E9F1',
                       }}>
-                      <Text>{product.name}</Text>
+                      <Text style={styles.productName}>{product.name}</Text>
                       {selected.includes(product) ? (
                         <Image
                           source={CHECK_IMAGE}
@@ -113,7 +117,7 @@ function User() {
                       ) : (
                         <View style={styles.radioButton} />
                       )}
-                      <Text>{product.price}</Text>
+                      <Text style={styles.productPrice}>{product.price} kr</Text>
                     </View>
                   </TouchableOpacity>
                 );
@@ -145,6 +149,11 @@ function User() {
 }
 
 const styles = StyleSheet.create({
+  amountSelectedText: {
+    color: 'rgba(31,33,38,0.61)',
+    fontSize: 16,
+    fontWeight: '500',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -168,8 +177,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   formLabel: {
-    fontSize: 20,
-    color: '#535353',
+    fontSize: 22,
+    color: '#1F2126',
+    fontWeight: '600',
   },
   mainView: {
     width: '100%',
@@ -227,6 +237,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FCFAF5',
     borderRadius: 50,
+  },
+  selectedAmountTextWrapper: {
+    marginTop: 45,
+    marginBottom: 24,
+    marginLeft: 16,
+  },
+  productName: {
+    fontWeight: '600',
+    fontSize: 20,
+    color: '#1F2126',
+  },
+  productPrice: {
+    fontWeight: '600',
+    fontSize: 16,
+    color: '#1F2126',
   },
 });
 
