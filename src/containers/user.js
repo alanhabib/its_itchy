@@ -84,7 +84,7 @@ function User() {
           <View style={styles.selectedAmountTextWrapper}>
             <Text style={styles.formLabel}>Products</Text>
             <Text style={styles.amountSelectedText}>
-              Selected: {selected.length}
+              Selected: {submit ? '0' : selected.length}
             </Text>
           </View>
           <ProductList
@@ -95,14 +95,10 @@ function User() {
           />
         </ScrollView>
         <TouchableOpacity
-          onPress={() => {
-            console.log('## 1st');
+          onPress={async () => {
             submitProducts(true);
-            console.log('## 2st');
-            addSelectedData();
-            console.log('## 3st');
+            await addSelectedData();
             scrollToTop();
-            console.log('## 4st');
           }}
           disabled={submit || selected.length > 5 || !selected.length}
           underlayColor="transparent"
