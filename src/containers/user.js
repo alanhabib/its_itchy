@@ -108,10 +108,12 @@ function User() {
             backgroundColor:
               submit || selected.length > 5 ? '#E0ECFE' : buttonColor,
             marginTop: 40,
+            marginBottom: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 60,
           }}>
-          <View style={styles.addButton}>
-            <Text style={styles.buttonTextStyle}>Add to cart</Text>
-          </View>
+          <Text style={styles.buttonTextStyle}>Add to cart</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -165,20 +167,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     fontSize: 20,
-  },
-  buttonStyle: {
-    width: '100%',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2880EA',
-    marginTop: 40,
-  },
-  addButton: {
-    height: 60,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttonTextStyle: {
     width: '100%',

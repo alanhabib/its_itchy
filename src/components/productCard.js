@@ -27,7 +27,10 @@ function ProductCard({product, submit, selected, addProduct}) {
         }}>
         <Text style={styles.productName}>{product.name}</Text>
         {selected.includes(product) ? (
-          <Image source={CHECK_IMAGE} style={styles.radioButton} />
+          <View style={{position: 'relative'}}>
+            <Image source={CHECK_IMAGE} style={styles.radioButton} />
+            <View style={styles.overlay} />
+          </View>
         ) : (
           <View style={styles.radioButton} />
         )}
@@ -56,6 +59,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: Dimensions.get('window').height * 0.14,
     width: '100%',
+  },
+  overlay:{
+
   },
   productName: {
     fontWeight: '600',
