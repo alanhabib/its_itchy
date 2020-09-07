@@ -1,5 +1,5 @@
 import React from 'react';
-import User from './src/containers/User';
+import User from './src/containers/user';
 import {Dimensions, StyleSheet, View} from 'react-native';
 console.disableYellowBox = true;
 

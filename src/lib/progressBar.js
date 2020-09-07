@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 
-function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
+function ShoppingSlider({submit, selected, deleteProduct}) {
   const progressBarAnimation = useRef(new Animated.Value(0));
   const animationHeight = useRef(new Animated.Value(0));
   const fadeIn = useRef(new Animated.Value(0));
@@ -25,7 +25,7 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
         useNativeDriver: false,
       }),
     ]).start();
-  }, [submit, progress, selected]);
+  }, [submit, selected]);
 
   const width = progressBarAnimation.current.interpolate({
     inputRange: [0, 5],
@@ -74,7 +74,6 @@ function ShoppingSlider({subtract, submit, selected, deleteProduct, progress}) {
                   <TouchableOpacity
                     onPress={() => {
                       deleteProduct(index);
-                      subtract();
                     }}>
                     <Text style={styles.deleteText}>Delete</Text>
                   </TouchableOpacity>

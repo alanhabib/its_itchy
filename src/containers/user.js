@@ -6,24 +6,15 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
-  Image,
 } from 'react-native';
-import ProgressBar from '../lib/ProgressBar';
-
-const CHECK_IMAGE = require('../assets/images/check-mark.png');
+import ProgressBar from '../lib/progressBar';
+import ProductList from '../components/productList';
 
 function User() {
   const [data, setData] = useState();
   const [selected, setSelected] = useState([]);
-  const [progress, setProgress] = useState(0);
   const [submit, setSubmit] = useState(false);
   const scrollRef = useRef();
-
-  const addToProgress = (key, number) =>
-    setProgress((prevCount) => Math.min(prevCount + key, number));
-
-  const subtract = () => setProgress((prevCount) => Math.max(prevCount - 1, 0));
 
   function fetchData() {
     return fetch('https://mock.itsitchy.com/products')
@@ -80,8 +71,6 @@ function User() {
     });
   }
 
-  console.log('scroll', scrollRef);
-
   const buttonColor = selected.length ? '#2880EA' : '#E0ECFE';
   return (
     <SafeAreaView style={styles.container}>
@@ -91,8 +80,6 @@ function User() {
             submit={submit}
             selected={selected}
             deleteProduct={deleteProduct}
-            progress={progress}
-            subtract={subtract}
           />
           <View style={styles.selectedAmountTextWrapper}>
             <Text style={styles.formLabel}>Products</Text>
@@ -100,47 +87,22 @@ function User() {
               Selected: {selected.length}
             </Text>
           </View>
-          {data
-            ? data.map((product, index) => {
-                return (
-                  <TouchableOpacity
-                    disabled={submit}
-                    onPress={() => {
-                      addProduct(product);
-                      addToProgress(selected.length, 5);
-                    }}
-                    key={index}>
-                    <View
-                      style={{
-                        ...styles.item,
-                        backgroundColor:
-                          submit && selected.includes(product)
-                            ? 'rgba(229,233,241,0.3)'
-                            : '#E5E9F1',
-                      }}>
-                      <Text style={styles.productName}>{product.name}</Text>
-                      {selected.includes(product) ? (
-                        <Image
-                          source={CHECK_IMAGE}
-                          style={styles.radioButton}
-                        />
-                      ) : (
-                        <View style={styles.radioButton} />
-                      )}
-                      <Text style={styles.productPrice}>
-                        {product.price} kr
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })
-            : []}
+          <ProductList
+            data={data}
+            addProduct={addProduct}
+            submit={submit}
+            selected={selected}
+          />
         </ScrollView>
         <TouchableOpacity
-          onPress={async () => {
+          onPress={() => {
+            console.log('## 1st');
             submitProducts(true);
-            await addSelectedData();
+            console.log('## 2st');
+            addSelectedData();
+            console.log('## 3st');
             scrollToTop();
+            console.log('## 4st');
           }}
           disabled={submit || selected.length > 5 || !selected.length}
           underlayColor="transparent"
@@ -178,16 +140,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 20,
   },
-  radioButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    backgroundColor: '#F6F3ED',
-    borderWidth: 1,
-    borderColor: '#F6F3ED',
-    borderStyle: 'solid',
-    alignSelf: 'flex-end',
-  },
   formLabel: {
     fontSize: 22,
     color: '#1F2126',
@@ -206,17 +158,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginTop: 10,
     fontSize: 15,
-  },
-  item: {
-    justifyContent: 'space-between',
-    marginTop: 24,
-    paddingVertical: 14,
-    paddingLeft: 16,
-    paddingRight: 24,
-    fontSize: 23,
-    borderRadius: 6,
-    height: Dimensions.get('window').height * 0.14,
-    width: '100%',
   },
   scrollView: {
     width: '100%',
@@ -255,16 +196,6 @@ const styles = StyleSheet.create({
     marginTop: 45,
     marginBottom: 24,
     marginLeft: 16,
-  },
-  productName: {
-    fontWeight: '600',
-    fontSize: 20,
-    color: '#1F2126',
-  },
-  productPrice: {
-    fontWeight: '600',
-    fontSize: 16,
-    color: '#1F2126',
   },
 });
 
