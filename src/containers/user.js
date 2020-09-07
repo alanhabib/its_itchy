@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  PixelRatio,
 } from 'react-native';
 import ProgressBar from '../lib/progressBar';
 import ProductList from '../components/productList';
@@ -108,7 +109,7 @@ function User() {
             backgroundColor:
               submit || selected.length > 5 ? '#E0ECFE' : buttonColor,
             marginTop: 40,
-            marginBottom: 20,
+            marginBottom: PixelRatio.get() === 2 ? 20 : 0,
             justifyContent: 'center',
             alignItems: 'center',
             height: 60,
@@ -133,7 +134,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 50,
     backgroundColor: '#FCFAF5',
     paddingHorizontal: 16,
     paddingVertical: 20,
