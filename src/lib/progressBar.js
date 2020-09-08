@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 
-function ShoppingSlider({submit, selected, deleteProduct}) {
+function ShoppingSlider({isSubmitted, selected, deleteProduct}) {
   const progressBarAnimation = useRef(new Animated.Value(0));
   const animationHeight = useRef(new Animated.Value(0));
   const fadeIn = useRef(new Animated.Value(0));
@@ -10,22 +10,22 @@ function ShoppingSlider({submit, selected, deleteProduct}) {
   useEffect(() => {
     Animated.parallel([
       Animated.timing(progressBarAnimation.current, {
-        toValue: submit && selected.length,
+        toValue: isSubmitted && selected.length,
         duration: 500,
         useNativeDriver: false,
       }),
       Animated.timing(animationHeight.current, {
-        toValue: submit && selected.length,
+        toValue: isSubmitted && selected.length,
         duration: 500,
         useNativeDriver: false,
       }),
       Animated.timing(fadeIn.current, {
-        toValue: submit && 1,
+        toValue: isSubmitted && 1,
         duration: 1500,
         useNativeDriver: false,
       }),
     ]).start();
-  }, [submit, selected]);
+  }, [isSubmitted, selected]);
 
   const width = progressBarAnimation.current.interpolate({
     inputRange: [0, 5],
@@ -54,7 +54,7 @@ function ShoppingSlider({submit, selected, deleteProduct}) {
       <View>
         <Text style={styles.shoppingCartItemsTextWrapper}>
           <Text style={styles.itemsTextShoppingCart}>Items</Text>{' '}
-          {submit ? selected.length : 0}/{sliderCount}
+          {isSubmitted ? selected.length : 0}/{sliderCount}
         </Text>
         <View style={styles.progressBar}>
           <Animated.View
@@ -64,7 +64,7 @@ function ShoppingSlider({submit, selected, deleteProduct}) {
             }
           />
         </View>
-        {submit && selected.length
+        {isSubmitted && selected.length
           ? selected.map((product, index) => (
               <Animated.View
                 style={{...styles.selectedProducts, opacity: opacity}}

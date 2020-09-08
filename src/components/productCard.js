@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 const CHECK_IMAGE = require('../assets/images/check-mark.png');
 
-function ProductCard({product, submit, selected, addProduct}) {
+function ProductCard({product, isSubmitted, selected, addProduct}) {
   return (
     <TouchableOpacity
       style={styles.wrapper}
-      disabled={submit}
+      disabled={isSubmitted}
       onPress={() => {
         addProduct(product);
       }}>
@@ -21,7 +21,7 @@ function ProductCard({product, submit, selected, addProduct}) {
         style={{
           ...styles.item,
           backgroundColor:
-            submit && selected.includes(product)
+            isSubmitted && selected.includes(product)
               ? 'rgba(229,233,241,0.3)'
               : '#E5E9F1',
         }}>
@@ -29,7 +29,7 @@ function ProductCard({product, submit, selected, addProduct}) {
         {selected.includes(product) ? (
           <View style={{position: 'relative'}}>
             <Image source={CHECK_IMAGE} style={styles.radioButton} />
-            <View style={styles.overlay} />
+            {isSubmitted && <View style={styles.overlay} />}
           </View>
         ) : (
           <View style={styles.radioButton} />
@@ -60,8 +60,16 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height * 0.14,
     width: '100%',
   },
-  overlay:{
-
+  overlay: {
+    flex: 1,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    opacity: 0.5,
+    backgroundColor: '#E5E9F1',
+    width: 30,
+    height: 30,
+    borderRadius: 50,
   },
   productName: {
     fontWeight: '600',

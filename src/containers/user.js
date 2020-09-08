@@ -14,14 +14,14 @@ import ProductList from '../components/productList';
 function User() {
   const [data, setData] = useState();
   const [selected, setSelected] = useState([]);
-  const [submit, setSubmit] = useState(false);
+  const [isSubmitted, setIsSubmit] = useState(false);
   const scrollRef = useRef();
 
   function fetchData() {
-    return fetch('https://mock.itsitchy.com/products')
+    fetch('https://mock.itsitchy.com/products')
       .then((res) => res.json())
       .then((mockData) => {
-        return setData(mockData);
+        setData(mockData);
       })
       .catch((error) => console.log('error from fetch', error));
   }
@@ -30,25 +30,14 @@ function User() {
     fetchData();
   }, []);
 
-  function filterData() {
-    return new Promise((resolve, reject) => {
-      if (data) {
-        const newData = data.filter((product) => !selected.includes(product));
-        resolve(newData);
-      } else {
-        reject('Found no data to filter');
-      }
-    });
-  }
-
-  async function addSelectedData() {
-    const filteredData = await filterData();
+  function addSelectedData() {
+    const filteredData = data.filter((product) => !selected.includes(product));
     const dataFiltered = filteredData.concat(selected);
-    return setData(dataFiltered);
+    setData(dataFiltered);
   }
 
   function addProduct(item) {
-    return setSelected((prevState) => {
+    setSelected((prevState) => {
       const array = selected.includes(item)
         ? selected.filter((product) => product !== item)
         : [...prevState, item];
@@ -57,12 +46,12 @@ function User() {
   }
 
   function submitProducts(show) {
-    setSubmit(show);
+    setIsSubmit(show);
   }
 
   function deleteProduct(key) {
     const newList = selected.filter((product, index) => key !== index);
-    return setSelected(newList);
+    setSelected(newList);
   }
 
   function scrollToTop() {
@@ -78,36 +67,36 @@ function User() {
       <View style={styles.mainView}>
         <ScrollView ref={scrollRef} style={styles.scrollView}>
           <ProgressBar
-            submit={submit}
+            isSubmitted={isSubmitted}
             selected={selected}
             deleteProduct={deleteProduct}
           />
           <View style={styles.selectedAmountTextWrapper}>
             <Text style={styles.formLabel}>Products</Text>
             <Text style={styles.amountSelectedText}>
-              Selected: {submit ? '0' : selected.length}
+              Selected: {isSubmitted ? '0' : selected.length}
             </Text>
           </View>
           <ProductList
             data={data}
             addProduct={addProduct}
-            submit={submit}
+            isSubmitted={isSubmitted}
             selected={selected}
           />
         </ScrollView>
         <TouchableOpacity
-          onPress={async () => {
+          onPress={() => {
             submitProducts(true);
-            await addSelectedData();
+            addSelectedData();
             scrollToTop();
           }}
-          disabled={submit || selected.length > 5 || !selected.length}
+          disabled={isSubmitted || selected.length > 5 || !selected.length}
           underlayColor="transparent"
           style={{
             width: '100%',
             borderRadius: 20,
             backgroundColor:
-              submit || selected.length > 5 ? '#E0ECFE' : buttonColor,
+              isSubmitted || selected.length > 5 ? '#E0ECFE' : buttonColor,
             marginTop: 40,
             marginBottom: PixelRatio.get() === 2 ? 20 : 0,
             justifyContent: 'center',
