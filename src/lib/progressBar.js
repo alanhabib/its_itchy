@@ -78,7 +78,7 @@ function ShoppingSlider({isSubmitted, selected, deleteProduct}) {
                     <Text style={styles.deleteText}>Delete</Text>
                   </TouchableOpacity>
                 </View>
-                <Text>{product.price}</Text>
+                <Text>{product.price} kr</Text>
               </Animated.View>
             ))
           : null}
